@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<strings>
+    <string id="WorkMinTitle">Work length (min)</string>
+    <string id="WorkMinPrompt">Work phase length in minutes</string>
+    <string id="BreakMinTitle">Break length (min)</string>
+    <string id="BreakMinPrompt">Break phase length in minutes</string>
+    <string id="ProjectsTitle">Projects</string>
+    <string id="ProjectsPrompt">Tag names separated by newlines or ; (a-z 0-9 - only)</string>
+    <string id="UrlTitle">TimeTagger URL</string>
+    <string id="UrlPrompt">Base URL, e.g. https://timetagger.app</string>
+    <string id="TokenTitle">API token</string>
+    <string id="TokenPrompt">TimeTagger API token (never shown again)</string>
+</strings>

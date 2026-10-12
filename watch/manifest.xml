@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest>
+    <application id="F1E4D55BE163410A9BE8BD8FB2D2D861" name="Pomodoro TT" version="0.1.0"
+                 entry="PomodoroApp" type="watch-app" minApiLevel="4.0.0">
+        <products>
+            <product id="fr955"/>
+        </products>
+        <permissions>
+            <permission id="Communications"/>
+        </permissions>
+        <languages>
+            <language>eng</language>
+        </languages>
+    </application>
+</manifest>

@@ -1,0 +1,2 @@
+base.pomodoro = $(BASEDIR)/source
+pomodoro.resources = $(BASEDIR)/resources

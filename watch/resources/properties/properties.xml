@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<properties>
+    <property id="workMin" type="number">
+        <default>25</default>
+    </property>
+    <property id="breakMin" type="number">
+        <default>5</default>
+    </property>
+    <property id="projects" type="string">
+        <default>focus&#10;admin</default>
+    </property>
+    <property id="ttUrl" type="string">
+        <default>https://timetagger.app</default>
+    </property>
+    <property id="ttToken" type="string">
+        <default></default>
+    </property>
+</properties>
