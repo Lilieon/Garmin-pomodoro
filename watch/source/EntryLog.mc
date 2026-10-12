@@ -10,7 +10,7 @@ using Toybox.Time as Time;
 class EntryLog {
     var session;
     var openEntry;
-    hidden var sync;
+    var sync;
 
     function initialize(syncObj) {
         sync = syncObj;
@@ -25,6 +25,15 @@ class EntryLog {
 
     function now() {
         return Time.now().value().toNumber();
+    }
+
+    // null-safe settings access (selftest runs outside PomodoroApp)
+    function setting(key, defaultValue) {
+        var v = App.Properties.getValue(key);
+        if (v == null) {
+            return defaultValue;
+        }
+        return v;
     }
 
     function state() {
@@ -48,7 +57,7 @@ class EntryLog {
     }
 
     function startSession(project) {
-        var mins = (App.getApp() as PomodoroApp).setting("workMin");
+        var mins = setting("workMin", 25);
         startWork(project, mins * 60);
     }
 
@@ -59,16 +68,15 @@ class EntryLog {
         if (now() < session.get("phaseEnd")) {
             return false;
         }
-        var app = App.getApp() as PomodoroApp;
         if (session.get("phase").equals("work")) {
             if (openEntry != null) {
                 closeEntry(session.get("phaseEnd"));
             }
             vibrate();
-            startBreak(app.setting("breakMin") * 60);
+            startBreak(setting("breakMin", 5) * 60);
         } else {
             vibrate();
-            startWork(session.get("project"), app.setting("workMin") * 60);
+            startWork(session.get("project"), setting("workMin", 25) * 60);
         }
         return true;
     }
@@ -96,14 +104,13 @@ class EntryLog {
         if (session == null) {
             return;
         }
-        var app = App.getApp() as PomodoroApp;
         if (session.get("phase").equals("work")) {
             if (openEntry != null) {
                 closeEntry(now());
             }
-            startBreak(app.setting("breakMin") * 60);
+            startBreak(setting("breakMin", 5) * 60);
         } else {
-            startWork(session.get("project"), app.setting("workMin") * 60);
+            startWork(session.get("project"), setting("workMin", 25) * 60);
         }
     }
 
@@ -115,14 +122,14 @@ class EntryLog {
         persist();
     }
 
-    hidden function startWork(project, durSec) {
+    function startWork(project, durSec) {
         session = {"phase" => "work", "project" => project,
                    "phaseEnd" => now() + durSec, "pausedRemaining" => null};
         open(project);
         persist();
     }
 
-    hidden function startBreak(durSec) {
+    function startBreak(durSec) {
         session = {"phase" => "break", "project" => session.get("project"),
                    "phaseEnd" => now() + durSec, "pausedRemaining" => null};
         persist();
@@ -133,14 +140,13 @@ class EntryLog {
         if (session == null || session.get("pausedRemaining") != null) {
             return;
         }
-        var app = App.getApp() as PomodoroApp;
         if (session.get("phase").equals("work") && openEntry != null
             && now() >= session.get("phaseEnd")) {
             closeEntry(session.get("phaseEnd"));
-            startBreak(app.setting("breakMin") * 60);
+            startBreak(setting("breakMin", 5) * 60);
         } else if (session.get("phase").equals("break")
             && now() >= session.get("phaseEnd")) {
-            startWork(session.get("project"), app.setting("workMin") * 60);
+            startWork(session.get("project"), setting("workMin", 25) * 60);
         }
     }
 

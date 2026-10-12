@@ -15,7 +15,7 @@ class ProjectPickerView extends Ui.View {
     }
 
     function onShow() {
-        var parsed = ProjectPicker.parse((App.getApp() as PomodoroApp).setting("projects"));
+        var parsed = ProjectPicker.parse(App.Properties.getValue("projects"));
         projects = parsed[0];
         invalid = parsed[1];
         if (projects.size() == 0) {
@@ -127,6 +127,9 @@ class ProjectPicker {
     }
 
     static function validTag(s) {
+        if (s.length() == 0) {
+            return false;
+        }
         var ok = "abcdefghijklmnopqrstuvwxyz0123456789-";
         for (var i = 0; i < s.length(); i++) {
             if (ok.find(s.substring(i, i + 1)) == null) {

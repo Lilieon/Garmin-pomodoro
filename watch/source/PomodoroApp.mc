@@ -9,13 +9,13 @@ class PomodoroApp extends App.AppBase {
 
     function initialize() {
         App.AppBase.initialize();
-        Sys.println("TT: app init");
+
         sync = new SyncClient();
         model = new EntryLog(sync);
     }
 
     function getInitialView() {
-        Sys.println("TT: initial view");
+
         if (model.hasActiveSession()) {
             return [new TimerView(), new TimerDelegate()] as Lang.Array;
         }

@@ -5,14 +5,23 @@ using Toybox.System as Sys;
 
 // Storage-backed queue + hand-rolled JSON (CIQ has no JSON writer).
 // Client-generated keys make PUT /api/v2/records idempotent.
+// Persistence: one small Storage key per record ("q<i>" = "key,t1,t2,ds,mt,st")
+// — a single big value trips memory/watchdog limits (verified in simulator).
 class SyncClient {
+    static var QUEUE_CAP = 500;
     hidden var queue;
     hidden var inFlight = false;
 
     function initialize() {
-        queue = App.Storage.getValue("syncQueue");
-        if (queue == null) {
-            queue = [];
+        queue = [];
+        var size = App.Storage.getValue("qsize");
+        if (size != null) {
+            for (var i = 0; i < size; i++) {
+                var s = App.Storage.getValue(keyAt(i));
+                if (s != null) {
+                    queue.add(parseRecord(s));
+                }
+            }
         }
     }
 
@@ -20,14 +29,29 @@ class SyncClient {
         return queue.size();
     }
 
+    function record(i) {
+        return queue[i];
+    }
+
     function enqueue(record) {
-        queue.add(record);
-        if (queue.size() > 500) {
-            queue.remove(0);
+        var overflow = queue.size() >= QUEUE_CAP;
+        if (overflow) {
+            // Array.remove is unreliable for index drops — rebuild without the oldest
+            var kept = [];
+            for (var i = 1; i < queue.size(); i++) {
+                kept.add(queue[i]);
+            }
+            queue = kept;
             // shortcut: minutes-level loss possible past 500 records, upgrade to flash-based file if ever hit
             Sys.println("SyncClient: queue overflow, dropped oldest record");
         }
-        persist();
+        queue.add(record);
+        if (overflow) {
+            writeAll(); // indices shifted — rewrite
+        } else {
+            App.Storage.setValue(keyAt(queue.size() - 1), serializeRecord(record));
+            App.Storage.setValue("qsize", queue.size());
+        }
         flush();
     }
 
@@ -35,9 +59,12 @@ class SyncClient {
         if (inFlight || queue.size() == 0) {
             return;
         }
-        var app = App.getApp() as PomodoroApp;
-        var url = app.setting("ttUrl");
-        var token = app.setting("ttToken");
+        var app = App.getApp();
+        if (app == null) {
+            return; // unit-test context: no app, no network
+        }
+        var url = App.Properties.getValue("ttUrl");
+        var token = App.Properties.getValue("ttToken");
         if (url == null || token == null || url.equals("") || token.equals("")) {
             return;
         }
@@ -61,7 +88,7 @@ class SyncClient {
     }
 
     // Tag charset [a-z0-9-]+ validated at settings parse — no escaping needed here.
-    hidden function recordJson(r) {
+    function recordJson(r) {
         return Lang.format("{\"key\":\"$1$\",\"t1\":$2$,\"t2\":$3$,\"ds\":\"$4$\",\"mt\":$5$,\"st\":0}",
             [r.get("key"), r.get("t1"), r.get("t2"), r.get("ds"), r.get("mt")]);
     }
@@ -91,14 +118,30 @@ class SyncClient {
             }
         }
         queue = kept;
-        persist();
+        writeAll();
     }
 
-    hidden function persist() {
-        if (queue.size() == 0) {
-            App.Storage.deleteValue("syncQueue");
-        } else {
-            App.Storage.setValue("syncQueue", queue);
+    hidden function keyAt(i) {
+        return "q" + i.toString();
+    }
+
+    // "key,t1,t2,ds,mt,st" — ds is comma-free (tags validated [a-z0-9-]+)
+    hidden function serializeRecord(r) {
+        return r.get("key") + "," + r.get("t1").toString() + ","
+               + r.get("t2").toString() + "," + r.get("ds") + ","
+               + r.get("mt").toString() + "," + r.get("st").toString();
+    }
+
+    hidden function parseRecord(s) {
+        var p = ProjectPicker.splitOn(s, ",");
+        return {"key" => p[0], "t1" => p[1].toNumber(), "t2" => p[2].toNumber(),
+                "ds" => p[3], "mt" => p[4].toNumber(), "st" => p[5].toNumber()};
+    }
+
+    hidden function writeAll() {
+        for (var i = 0; i < queue.size(); i++) {
+            App.Storage.setValue(keyAt(i), serializeRecord(queue[i]));
         }
+        App.Storage.setValue("qsize", queue.size());
     }
 }
