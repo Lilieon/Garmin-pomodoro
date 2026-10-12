@@ -1,0 +1,10 @@
+bin/
+*.prg
+*.prg.debug.xml
+*.der
+*.pem
+properties.local.mk
+.devcontainer/gh.env
+.vscode/
+.idea/
+*.swp
