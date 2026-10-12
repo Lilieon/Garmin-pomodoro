@@ -22,18 +22,17 @@ class TimerDelegate extends Ui.InputDelegate {    function initialize() {
         if (st == null) {
             return;
         }
-        var items = [];
+        var menu = new Ui.Menu2({:title => st.get("project")});
         if (st.get("phase").equals("work")) {
             if (st.get("paused")) {
-                items.add(new Ui.MenuItem("Resume", null, "resume", null));
+                menu.addItem(new Ui.MenuItem("Resume", null, "resume", null));
             } else {
-                items.add(new Ui.MenuItem("Pause", null, "pause", null));
+                menu.addItem(new Ui.MenuItem("Pause", null, "pause", null));
             }
         }
-        items.add(new Ui.MenuItem("Skip", null, "skip", null));
-        items.add(new Ui.MenuItem("End session", null, "stop", null));
-        Ui.pushView(new Ui.Menu2({:title => st.get("project"), :items => items}),
-                    new StopMenuDelegate(), Ui.SLIDE_UP);
+        menu.addItem(new Ui.MenuItem("Skip", null, "skip", null));
+        menu.addItem(new Ui.MenuItem("End session", null, "stop", null));
+        Ui.pushView(menu, new StopMenuDelegate(), Ui.SLIDE_UP);
     }
 }
 

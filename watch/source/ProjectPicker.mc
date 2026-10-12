@@ -21,9 +21,9 @@ class ProjectPickerView extends Ui.View {
         if (projects.size() == 0) {
             return;
         }
-        var items = [];
+        var menu = new Ui.Menu2({:title => "Project?"});
         for (var i = 0; i < projects.size(); i++) {
-            items.add(new Ui.MenuItem(projects[i], null, projects[i], null));
+            menu.addItem(new Ui.MenuItem(projects[i], null, projects[i], null));
         }
         if (invalid.size() > 0) {
             var skipped = "";
@@ -33,10 +33,9 @@ class ProjectPickerView extends Ui.View {
                 }
                 skipped += invalid[i];
             }
-            items.add(new Ui.MenuItem("skipped: " + skipped, null, "invalid", null));
+            menu.addItem(new Ui.MenuItem("skipped: " + skipped, null, "invalid", null));
         }
-        Ui.pushView(new Ui.Menu2({:title => "Project?", :items => items}),
-                    new ProjectMenuDelegate(), Ui.SLIDE_IMMEDIATE);
+        Ui.pushView(menu, new ProjectMenuDelegate(), Ui.SLIDE_IMMEDIATE);
     }
 
     function onUpdate(dc) {
