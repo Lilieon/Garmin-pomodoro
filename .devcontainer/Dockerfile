@@ -9,7 +9,8 @@ RUN apt-get update \
   && apt-get install -y git curl wget unzip jq nano sudo default-jre fontconfig \
      libgtk-3-0 iputils-ping libsecret-1-0 libgles2 \
      libwoff1 libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 libgstreamer-gl1.0-0 \
-     libenchant-2-2 libhyphen0 libmanette-0.2-0 libaom3 libyuv0 \
+     libenchant-2-2 libhyphen0 libmanette-0.2-0 libaom3 libyuv0 glib-networking libusb-1.0-0 \
+     xvfb x11-utils \
   && rm -rf /var/lib/apt/lists/*
 
 # webkit2gtk-4.0 stack for the Garmin SDK Manager (GUI, needs Garmin login for device packs).
@@ -32,6 +33,8 @@ RUN mkdir -p /opt/bw \
   && apt-get update \
   && apt-get install -y -t bookworm libgav1-1 librav1e0 libsvtav1enc1 \
   && rm -rf /var/lib/apt/lists/* /opt/bw/*.deb \
+  && echo "/opt/bw/usr/lib/x86_64-linux-gnu" > /etc/ld.so.conf.d/ciq-bw.conf \
+  && ldconfig \
   && ln -sfn /opt/bw/usr/lib/x86_64-linux-gnu/webkit2gtk-4.0 /usr/lib/x86_64-linux-gnu/webkit2gtk-4.0
 
 # SDK Manager itself (GUI; run `sdkmanager` with DISPLAY set — needs one-time Garmin login
@@ -40,7 +43,7 @@ RUN mkdir -p /opt/sdk-manager \
   && curl -fsSL -o /tmp/mgr.zip "https://developer.garmin.com/downloads/connect-iq/sdk-manager/connectiq-sdk-manager-linux.zip" \
   && unzip -qo /tmp/mgr.zip -d /opt/sdk-manager \
   && rm /tmp/mgr.zip \
-  && printf '#!/bin/bash\nexec env LD_LIBRARY_PATH=/opt/bw/usr/lib/x86_64-linux-gnu:/opt/bw/usr/lib /opt/sdk-manager/bin/sdkmanager "$@"\n' > /usr/local/bin/sdkmanager \
+  && printf '#!/bin/bash\nexec /opt/sdk-manager/bin/sdkmanager "$@"\n' > /usr/local/bin/sdkmanager \
   && chmod +x /usr/local/bin/sdkmanager
 
 # Connect IQ SDK — newest version from Garmin's index (list is ascending, so sort + take last)

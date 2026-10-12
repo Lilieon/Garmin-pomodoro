@@ -17,7 +17,8 @@
     }
   },
   "runArgs": [
-    "--add-host=host.docker.internal:host-gateway"
+    "--add-host=host.docker.internal:host-gateway",
+    "--dns=1.1.1.1"
   ],
   "mounts": [
     "type=bind,src=/run/user/1000/gcr/ssh,dst=/ssh-agent",
