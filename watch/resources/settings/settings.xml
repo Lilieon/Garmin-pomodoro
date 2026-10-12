@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<settings>
-    <setting propertyKey="@Properties.workMin" title="@Strings.WorkMinTitle" prompt="@Strings.WorkMinPrompt">
-        <settingConfig type="numeric" min="1" max="120"/>
-    </setting>
-    <setting propertyKey="@Properties.breakMin" title="@Strings.BreakMinTitle" prompt="@Strings.BreakMinPrompt">
-        <settingConfig type="numeric" min="1" max="60"/>
-    </setting>
-    <setting propertyKey="@Properties.projects" title="@Strings.ProjectsTitle" prompt="@Strings.ProjectsPrompt">
-        <settingConfig type="alphaNumeric"/>
-    </setting>
-    <setting propertyKey="@Properties.ttUrl" title="@Strings.UrlTitle" prompt="@Strings.UrlPrompt">
-        <settingConfig type="alphaNumeric"/>
-    </setting>
-    <setting propertyKey="@Properties.ttToken" title="@Strings.TokenTitle" prompt="@Strings.TokenPrompt">
-        <settingConfig type="alphaNumeric" secure="true"/>
-    </setting>
-</settings>
+<resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <settings>
+        <setting propertyKey="@Properties.workMin" title="@Strings.WorkMinTitle" prompt="@Strings.WorkMinPrompt">
+            <settingConfig type="numeric" min="1" max="120"/>
+        </setting>
+        <setting propertyKey="@Properties.breakMin" title="@Strings.BreakMinTitle" prompt="@Strings.BreakMinPrompt">
+            <settingConfig type="numeric" min="1" max="60"/>
+        </setting>
+        <setting propertyKey="@Properties.projects" title="@Strings.ProjectsTitle" prompt="@Strings.ProjectsPrompt">
+            <settingConfig type="alphaNumeric"/>
+        </setting>
+        <setting propertyKey="@Properties.ttUrl" title="@Strings.UrlTitle" prompt="@Strings.UrlPrompt">
+            <settingConfig type="alphaNumeric"/>
+        </setting>
+        <setting propertyKey="@Properties.ttToken" title="@Strings.TokenTitle" prompt="@Strings.TokenPrompt">
+            <settingConfig type="alphaNumeric"/>
+        </setting>
+    </settings>
+</resources>

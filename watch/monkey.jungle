@@ -1,2 +1,1 @@
-base.pomodoro = $(BASEDIR)/source
-pomodoro.resources = $(BASEDIR)/resources
+project.manifest = manifest.xml

@@ -1,10 +1,7 @@
 DEVICE ?= fr955
 -include properties.local.mk
 
-SDK ?= $(CIQ_SDK)
-ifeq ($(SDK),)
-SDK := $(HOME)/connectiq
-endif
+SDK ?= $(firstword $(wildcard $(HOME)/.Garmin/ConnectIQ/Sdks/connectiq-sdk-lin-*) $(CIQ_SDK) /opt/connectiq)
 
 KEY ?= $(HOME)/.connectiq/developer_key.der
 JUNGLE ?= watch/monkey.jungle
@@ -16,14 +13,13 @@ MKBIN := java -jar $(SDK)/bin/monkeybrains.jar
 
 build: $(OUT)
 
-$(OUT):
+$(OUT): $(shell find watch -type f 2>/dev/null)
 	@mkdir -p bin
 	$(MKBIN) -o $@ -f $(JUNGLE) -y $(KEY) -d $(DEVICE) -w
 
 sim: build
 	$(SDK)/bin/connectiq &
 	$(SDK)/bin/monkeydo $(OUT) $(DEVICE)
-
 clean:
 	rm -rf bin
 

@@ -23,7 +23,7 @@ class SyncClient {
     function enqueue(record) {
         queue.add(record);
         if (queue.size() > 500) {
-            queue.shift();
+            queue.remove(0);
             // shortcut: minutes-level loss possible past 500 records, upgrade to flash-based file if ever hit
             Sys.println("SyncClient: queue overflow, dropped oldest record");
         }
@@ -66,7 +66,7 @@ class SyncClient {
             [r.get("key"), r.get("t1"), r.get("t2"), r.get("ds"), r.get("mt")]);
     }
 
-    hidden function onResponse(code, data) {
+    hidden function onResponse(code as Lang.Number, data as Lang.Dictionary or Lang.String or Null) as Void {
         inFlight = false;
         if (code != 200 || data == null || !(data instanceof Lang.Dictionary)) {
             return; // network failure: everything stays queued, retried at next flush trigger

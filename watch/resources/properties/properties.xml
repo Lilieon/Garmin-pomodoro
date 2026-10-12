@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<properties>
-    <property id="workMin" type="number">
-        <default>25</default>
-    </property>
-    <property id="breakMin" type="number">
-        <default>5</default>
-    </property>
-    <property id="projects" type="string">
-        <default>focus&#10;admin</default>
-    </property>
-    <property id="ttUrl" type="string">
-        <default>https://timetagger.app</default>
-    </property>
-    <property id="ttToken" type="string">
-        <default></default>
-    </property>
-</properties>
+<resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <properties>
+        <property id="workMin" type="number">25</property>
+        <property id="breakMin" type="number">5</property>
+        <property id="projects" type="string">focus&#10;admin</property>
+        <property id="ttUrl" type="string">https://timetagger.app</property>
+        <property id="ttToken" type="string"></property>
+    </properties>
+</resources>

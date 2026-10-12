@@ -26,7 +26,14 @@ class ProjectPickerView extends Ui.View {
             items.add(new Ui.MenuItem(projects[i], null, projects[i], null));
         }
         if (invalid.size() > 0) {
-            items.add(new Ui.MenuItem("skipped: " + invalid.join(", "), null, "invalid", null));
+            var skipped = "";
+            for (var i = 0; i < invalid.size(); i++) {
+                if (i > 0) {
+                    skipped += ", ";
+                }
+                skipped += invalid[i];
+            }
+            items.add(new Ui.MenuItem("skipped: " + skipped, null, "invalid", null));
         }
         Ui.pushView(new Ui.Menu2({:title => "Project?", :items => items}),
                     new ProjectMenuDelegate(), Ui.SLIDE_IMMEDIATE);
@@ -50,15 +57,20 @@ class ProjectMenuDelegate extends Ui.Menu2InputDelegate {
         Ui.Menu2InputDelegate.initialize();
     }
 
-    function onSelect(item) {
+    function onSelect(item as Ui.MenuItem) as Void {
         var id = item.getId().toString();
         if (id.equals("invalid")) {
-            return true;
+            return;
         }
         (App.getApp() as PomodoroApp).model.startSession(id);
-        Ui.popView();
+        Ui.popView(Ui.SLIDE_IMMEDIATE);
         Ui.pushView(new TimerView(), new TimerDelegate(), Ui.SLIDE_UP);
-        return true;
+    }
+}
+
+class ProjectPickerDelegate extends Ui.InputDelegate {
+    function initialize() {
+        Ui.InputDelegate.initialize();
     }
 }
 
@@ -66,25 +78,53 @@ class ProjectPicker {
     static function parse(raw) {
         var valid = [];
         var invalid = [];
-        if (raw == null) {
-            return [valid, invalid] as Lang.Array;
-        }
-        var semi = raw.split(";");
-        for (var i = 0; i < semi.size(); i++) {
-            var lines = semi[i].split("\n");
-            for (var j = 0; j < lines.size(); j++) {
-                var p = lines[j].trim();
-                if (p.equals("")) {
-                    continue;
-                }
-                if (validTag(p)) {
-                    valid.add(p);
-                } else {
-                    invalid.add(p);
+        if (raw != null) {
+            var semi = splitOn(raw, ";");
+            for (var i = 0; i < semi.size(); i++) {
+                var lines = splitOn(semi[i], "\n");
+                for (var j = 0; j < lines.size(); j++) {
+                    var p = trim(lines[j]);
+                    if (p.equals("")) {
+                        continue;
+                    }
+                    if (validTag(p)) {
+                        valid.add(p);
+                    } else {
+                        invalid.add(p);
+                    }
                 }
             }
         }
         return [valid, invalid] as Lang.Array;
+    }
+
+    static function splitOn(s, sep) as Lang.Array {
+        var out = [];
+        var rest = s;
+        var i = rest.find(sep);
+        while (i != null) {
+            out.add(rest.substring(0, i));
+            rest = rest.substring(i + 1, rest.length());
+            i = rest.find(sep);
+        }
+        out.add(rest);
+        return out;
+    }
+
+    static function trim(s) {
+        var start = 0;
+        var end = s.length();
+        while (start < end && isSpace(s.substring(start, start + 1))) {
+            start += 1;
+        }
+        while (end > start && isSpace(s.substring(end - 1, end))) {
+            end -= 1;
+        }
+        return s.substring(start, end);
+    }
+
+    static function isSpace(c) {
+        return c.equals(" ") || c.equals("\t") || c.equals("\r");
     }
 
     static function validTag(s) {

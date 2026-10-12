@@ -2,8 +2,7 @@ using Toybox.Application as App;
 using Toybox.Lang as Lang;
 using Toybox.WatchUi as Ui;
 
-class TimerDelegate extends Ui.InputDelegate {
-    function initialize() {
+class TimerDelegate extends Ui.InputDelegate {    function initialize() {
         Ui.InputDelegate.initialize();
     }
 
@@ -12,7 +11,7 @@ class TimerDelegate extends Ui.InputDelegate {
         return true;
     }
 
-    function onTap(x, y) {
+    function onTap(evt as Ui.ClickEvent) as Lang.Boolean {
         showMenu();
         return true;
     }
@@ -43,7 +42,7 @@ class StopMenuDelegate extends Ui.Menu2InputDelegate {
         Ui.Menu2InputDelegate.initialize();
     }
 
-    function onSelect(item) {
+    function onSelect(item as Ui.MenuItem) as Void {
         var app = App.getApp() as PomodoroApp;
         var id = item.getId().toString();
         if (id.equals("pause")) {
@@ -54,13 +53,12 @@ class StopMenuDelegate extends Ui.Menu2InputDelegate {
             app.model.skip();
         } else if (id.equals("stop")) {
             app.model.stopSession();
-            Ui.popView();
-            Ui.popView();
+            Ui.popView(Ui.SLIDE_IMMEDIATE);
+            Ui.popView(Ui.SLIDE_IMMEDIATE);
             Ui.requestUpdate();
-            return true;
+            return;
         }
-        Ui.popView();
+        Ui.popView(Ui.SLIDE_IMMEDIATE);
         Ui.requestUpdate();
-        return true;
     }
 }

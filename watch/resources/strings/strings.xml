@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <strings>
+    <string id="AppName">Pomodoro TT</string>
     <string id="WorkMinTitle">Work length (min)</string>
     <string id="WorkMinPrompt">Work phase length in minutes</string>
     <string id="BreakMinTitle">Break length (min)</string>

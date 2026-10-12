@@ -25,7 +25,7 @@ class TimerView extends Ui.View {
         }
     }
 
-    function onTick() {
+    function onTick() as Void {
         var app = App.getApp() as PomodoroApp;
         app.model.tick();
         Ui.requestUpdate();
