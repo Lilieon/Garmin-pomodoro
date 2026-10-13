@@ -38,9 +38,17 @@ class PomodoroSelfTest {
         App.Storage.deleteValue("counter");
     }
 
+    // Every client in this suite must be network-detached, even when the
+    // simulator/device has a token-bearing settings slot for the app id.
+    static function newSync() {
+        var sync = new SyncClient();
+        sync.setEndpoint("", "");
+        return sync;
+    }
+
     static function freshModel() {
         clean();
-        return new EntryLog(new SyncClient());
+        return new EntryLog(newSync());
     }
 
     // --- pure helpers (ProjectPicker) ---
@@ -87,7 +95,7 @@ class PomodoroSelfTest {
 
     static function testQueueCap() {
         clean();
-        var sync = new SyncClient();
+        var sync = newSync();
         for (var i = 0; i < 502; i++) {
             sync.enqueue({"key" => "k" + i.toString(), "t1" => i, "t2" => i + 1,
                           "ds" => "#x focus", "mt" => i + 1, "st" => 0});
@@ -99,7 +107,7 @@ class PomodoroSelfTest {
 
     static function testRecordJson() {
         clean();
-        var sync = new SyncClient();
+        var sync = newSync();
         TT.assertEqual(
             "{\"key\":\"abc\",\"t1\":10,\"t2\":20,\"ds\":\"#focus focus\",\"mt\":20,\"st\":0}",
             sync.recordJson({"key" => "abc", "t1" => 10, "t2" => 20,
@@ -195,7 +203,7 @@ class PomodoroSelfTest {
     // Plan rule 4: exit mid-phase → relaunch retro-closes at scheduled end
     static function testRetroCloseOnRelaunch() {
         clean();
-        var model = new EntryLog(new SyncClient());
+        var model = new EntryLog(newSync());
         model.startWork("focus", 1500);
         // simulate "app exited mid-phase, phaseEnd passed while away":
         // entry actually started 3600s ago, was due to end 2100s ago
@@ -204,7 +212,7 @@ class PomodoroSelfTest {
         model.openEntry.put("t1", oldT1);
         model.session.put("phaseEnd", scheduledEnd);
         model.persist();
-        var relaunched = new EntryLog(new SyncClient());
+        var relaunched = new EntryLog(newSync());
         TT.assertEqual("break", relaunched.state().get("phase"),
                        "relaunch enters break after expired work");
         TT.assertEqual(1, relaunched.sync.queuedCount(),
@@ -218,11 +226,11 @@ class PomodoroSelfTest {
 
     static function testPausedStateSurvivesRelaunch() {
         clean();
-        var model = new EntryLog(new SyncClient());
+        var model = new EntryLog(newSync());
         model.startWork("focus", 1500);
         model.pause();
         var remaining = model.state().get("remaining");
-        var relaunched = new EntryLog(new SyncClient());
+        var relaunched = new EntryLog(newSync());
         var st = relaunched.state();
         TT.assertTrue(st.get("paused"), "pause survives relaunch");
         TT.assertEqual(remaining, st.get("remaining"), "remaining preserved");

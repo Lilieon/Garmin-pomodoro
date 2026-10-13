@@ -11,9 +11,21 @@ class SyncClient {
     static var QUEUE_CAP = 500;
     hidden var queue;
     hidden var inFlight = false;
+    // Snapshot at initialize(): Properties are per-app-instance settings that
+    // tests must be able to detach from (setEndpoint("", "")) before flushing.
+    hidden var url = "";
+    hidden var token = "";
 
     function initialize() {
         queue = [];
+        url = App.Properties.getValue("ttUrl");
+        token = App.Properties.getValue("ttToken");
+        if (url == null) {
+            url = "";
+        }
+        if (token == null) {
+            token = "";
+        }
         var size = App.Storage.getValue("qsize");
         if (size != null) {
             for (var i = 0; i < size; i++) {
@@ -55,6 +67,11 @@ class SyncClient {
         flush();
     }
 
+    function setEndpoint(u as Lang.String, t as Lang.String) {
+        url = u;
+        token = t;
+    }
+
     function flush() {
         if (inFlight || queue.size() == 0) {
             return;
@@ -63,9 +80,7 @@ class SyncClient {
         if (app == null) {
             return; // unit-test context: no app, no network
         }
-        var url = App.Properties.getValue("ttUrl");
-        var token = App.Properties.getValue("ttToken");
-        if (url == null || token == null || url.equals("") || token.equals("")) {
+        if (url.equals("") || token.equals("")) {
             return;
         }
         if (url.substring(url.length() - 1, url.length()).equals("/")) {
