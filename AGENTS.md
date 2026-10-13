@@ -13,6 +13,7 @@ Pomodoro timer for Garmin Forerunner 955 logging work phases directly to TimeTag
 |---------|-------------|
 | `make build` | Compile `bin/fr955.prg` (monkeyc via monkeybrains.jar) |
 | `make sim` | Build + launch simulator with the app |
+| `make selftest` | Build + run the 65-assert hermetic suite in the simulator |
 | `make clean` | Remove `bin/` |
 | `make key` | Generate developer signing key |
 
@@ -34,6 +35,8 @@ docs/adr/          architecture decisions (MADR)
 - No GPL code (garmodoro is reference-only). garmin-toggl (MIT) is the sync-mechanics reference.
 - Persisted Storage dictionaries use String keys/values only.
 - Never log or echo the API token.
+- `make selftest` needs the 8.4.1 simulator at `~/ciq841` (9.x sims reject developer-signed PRGs).
+- ADRs stay `proposed` until reviewed by the user.
 
 ## Architecture
 
