@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <iq:manifest xmlns:iq="http://www.garmin.com/xml/connectiq" version="3">
-    <iq:application entry="SelfTestApp" id="0FF1CE005E1F1057A0DDBA5EF1E2D861"
+    <iq:application entry="SelfTestApp" id="0FF1CE005E1F1057A0DDBA5EF1E2D999"
                     launcherIcon="@Drawables.LauncherIcon" minSdkVersion="4.0.0"
                     name="@Strings.AppName" type="watch-app" version="0.1.0">
         <iq:products>
