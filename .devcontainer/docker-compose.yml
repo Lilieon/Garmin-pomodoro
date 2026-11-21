@@ -1,0 +1,26 @@
+# Shared base — committed. Personal config goes in docker-compose.override.yml
+# (gitignored, see docker-compose.override.yml.example); Compose merges it over this file.
+services:
+  pomodoro:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    init: true
+    # Dev container needs a never-exiting command (VS Code injects none in Compose mode).
+    command: sleep infinity
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      DISPLAY: ":0"
+      SSH_AUTH_SOCK: /ssh-agent
+    volumes:
+      # Workspace bind — detected by VS Code as the dev container workspace.
+      - ..:/workspace/pomodoro
+      # X11 socket for the CIQ simulator and the SDK Manager GUI (host: xhost +local:)
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      # Host ssh agent; override the source path in the personal override if yours differs.
+      - ${SSH_AUTH_SOCK:-/run/user/1000/gcr/ssh}:/ssh-agent
+    # Local secrets (GITHUB_TOKEN, ...) — optional, gitignored. `required` needs Compose >= 2.24.
+    env_file:
+      - path: ./gh.env
+        required: false

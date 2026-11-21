@@ -1,0 +1,16 @@
+# Personal overrides — copy to docker-compose.override.yml (gitignored):
+#   cp docker-compose.override.yml.example docker-compose.override.yml
+# (initializeCommand seeds it automatically on first "Reopen in Container".)
+# Compose merges this file over docker-compose.yml: maps merge per key (this file wins),
+# lists (volumes, dns, ...) are appended; an entry with the same container path replaces the base one.
+services:
+  pomodoro:
+    # Machine-specific DNS workaround (slow host resolvers stall the SDK Manager)
+    dns:
+      - 1.1.1.1
+    environment:
+      KILOCODE_WORKSPACE_ID: garmin-pomodoro-timetagger
+    volumes:
+      - ${HOME}/.config/kilo:/home/node/.config/kilo
+      - ${HOME}/.local/share/kilo:/home/node/.local/share/kilo
+      - ${HOME}/.local/state/kilo:/home/node/.local/state/kilo

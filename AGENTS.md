@@ -20,7 +20,9 @@ Pomodoro timer for Garmin Forerunner 955 logging work phases directly to TimeTag
 ## Project layout
 
 ```
-.devcontainer/     dev container (JDK + Connect IQ SDK)
+.devcontainer/     dev container: Dockerfile base image + Compose base + gitignored personal override (ADR-0003)
+  scripts/         shared lifecycle hooks (init-host, post-create)
+  local/           personal post-create hooks (gitignored, README committed)
 watch/
   manifest.xml     app id, fr955 product, Communications permission
   monkey.jungle    compiler config (source + resources paths)
@@ -37,6 +39,7 @@ docs/adr/          architecture decisions (MADR)
 - Never log or echo the API token.
 - `make selftest` needs the 8.4.1 simulator at `~/ciq841` (9.x sims reject developer-signed PRGs).
 - ADRs stay `proposed` until reviewed by the user.
+- Never commit personal config (git identity, personal tools/mounts, machine-specific flags): they go in `.devcontainer/docker-compose.override.yml` or `.devcontainer/local/*.sh` — both gitignored (ADR-0003).
 
 ## Architecture
 

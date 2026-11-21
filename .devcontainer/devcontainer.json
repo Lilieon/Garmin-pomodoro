@@ -1,7 +1,14 @@
 {
   "name": "garmin-pomodoro-timetagger",
-  "dockerFile": "Dockerfile",
-  "context": ".",
+  "dockerComposeFile": [
+    "docker-compose.yml",
+    "docker-compose.override.yml"
+  ],
+  "service": "pomodoro",
+  "workspaceFolder": "/workspace/pomodoro",
+  "remoteUser": "node",
+  "initializeCommand": "bash .devcontainer/scripts/init-host.sh",
+  "postCreateCommand": "bash .devcontainer/scripts/post-create.sh",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -11,31 +18,8 @@
         "donjayamanne.githistory",
         "eamodio.gitlens",
         "redhat.vscode-xml",
-        "kilocode.kilo-code",
         "jebbs.markdown-extended"
       ]
     }
-  },
-  "runArgs": [
-    "--add-host=host.docker.internal:host-gateway",
-    "--dns=1.1.1.1"
-  ],
-  "mounts": [
-    "type=bind,src=/run/user/1000/gcr/ssh,dst=/ssh-agent",
-    "source=${localEnv:HOME}/.config/kilo,target=/home/node/.config/kilo,type=bind",
-    "source=${localEnv:HOME}/.local/share/kilo,target=/home/node/.local/share/kilo,type=bind",
-    "source=${localEnv:HOME}/.local/state/kilo,target=/home/node/.local/state/kilo,type=bind",
-    "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,readonly"
-  ],
-  "remoteEnv": {
-    "SSH_AUTH_SOCK": "/ssh-agent",
-    "DISPLAY": ":0"
-  },
-  "containerEnv": {
-    "KILOCODE_WORKSPACE_ID": "garmin-pomodoro-timetagger"
-  },
-  "workspaceFolder": "/workspace/pomodoro",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace/pomodoro,type=bind",
-  "remoteUser": "node",
-  "postCreateCommand": "sudo chown -R node:node /workspace /home/node/.vscode-server 2>/dev/null; gh auth setup-git || true"
+  }
 }

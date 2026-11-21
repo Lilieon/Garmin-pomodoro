@@ -10,6 +10,7 @@ Work phases become TimeTagger records (`{"key", "t1", "t2", "ds": "#<project> fo
 - For `make sim` inside the container, allow local X once on the host: `xhost +local:`
 - A developer key: `make key` (once, generates `~/.connectiq/developer_key.der`)
 - A TimeTagger instance (self-hosted with a valid TLS cert, or `https://timetagger.app`) and its API token (Settings → API in the TimeTagger web UI)
+- Personal container config (git identity, tools, mounts): copy `.devcontainer/docker-compose.override.yml.example` → `docker-compose.override.yml` and/or add `.devcontainer/local/*.sh` hooks — both gitignored
 
 ## Commands
 

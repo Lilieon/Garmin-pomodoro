@@ -68,10 +68,7 @@ RUN mkdir -p -m 755 /etc/apt/keyrings \
   && apt-get install -y gh \
   && rm -rf /var/lib/apt/lists/*
 
-RUN npm install -g @kilocode/cli
-
-RUN git config --system user.email "lilian.lemee@pm.me" \
-  && git config --system user.name "Lilieon"
+# Base image only — personal tools and git identity go in .devcontainer/local/*.sh hooks (gitignored).
 
 RUN echo "node ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 

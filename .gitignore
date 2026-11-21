@@ -5,6 +5,9 @@ bin/
 *.pem
 properties.local.mk
 .devcontainer/gh.env
+.devcontainer/docker-compose.override.yml
+.devcontainer/local/*
+!.devcontainer/local/README.md
 .vscode/
 .idea/
 *.swp
